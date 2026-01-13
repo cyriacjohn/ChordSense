@@ -1,0 +1,23 @@
+# Visual Studio crap
+.vs/
+*.vscode/
+*.user
+*.suo
+*.cache
+*.slnx/
+*.vsidx
+
+# Build outputs
+bin/
+obj/
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Packages
+*.nupkg
+*.DLL
