@@ -2,26 +2,36 @@
 using ChordSense.Api.Models.Requests;
 using ChordSense.Api.Models.Responses;
 using Microsoft.AspNetCore.Http.HttpResults;
+using System.Text;
+using System.Text.Json;
 
-namespace ChordSense.Api.Controllers
+[ApiController]
+[Route("api/analysis")]
+public class AnalysisController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AnalysisController : ControllerBase
-    {
-        [HttpPost("lyrics")]
-        public IActionResult AnalyzeLyrics([FromBody] LyricAnalysisRequest request)
-        {
-            var result = new LyricAnalysisResponse
-            {
-                WesternKey = "C Major",
-                WesternChords = new[] { "C", "G", "Am", "F" },
-                CarnaticRaga = "Shankarabharanam",
-                HindustanRaga = "Bilawal",
-                Swaras = new[] { "Sa", "Ri2", "Ga3", "Ma1", "Pa", "Dha2", "Ni3" }
-            };
+    private readonly HttpClient _http;
 
-            return Ok(result);
-        }
+    public AnalysisController(IHttpClientFactory httpClientFactory)
+    {
+        _http = httpClientFactory.CreateClient();
+    }
+
+    [HttpPost("lyrics")]
+    public async Task<IActionResult> AnalyzeLyrics([FromBody] LyricAnalysisRequest request)
+    {
+        var flaskUrl = "http://localhost:5001/analyze/lyrics";
+        var payload = new
+        {
+            text = request.Lyrics
+        };
+
+        var json = JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _http.PostAsync(flaskUrl, content);
+        var result = await response.Content.ReadAsStringAsync();
+
+        return Content(result, "application/json");
     }
 }
+

@@ -13,6 +13,9 @@ builder.Services.AddControllers();
 // Swagger / OpenAPI
 builder.Services.AddOpenApi();
 
+// HttpClient 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
