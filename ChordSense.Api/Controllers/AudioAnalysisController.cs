@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace ChordSense.Api.Controllers
@@ -9,6 +10,14 @@ namespace ChordSense.Api.Controllers
     [Route("api/analysis")]
     public class AudioAnalysisController : ControllerBase
     {
+        private readonly HttpClient _http;
+
+        public AudioAnalysisController(IHttpClientFactory httpClientFactory)
+        {
+            _http = httpClientFactory.CreateClient();
+        }
+
+
         [HttpPost("audio")]
         public async Task<IActionResult> AnalyzeAudio([FromForm] IFormFile file)
         {
@@ -16,7 +25,6 @@ namespace ChordSense.Api.Controllers
             {
                 return BadRequest("No audio file uploaded");
             }
-            using var client = new HttpClient();
             using var content = new MultipartFormDataContent();
 
             var fileContent = new StreamContent(file.OpenReadStream());
@@ -24,10 +32,10 @@ namespace ChordSense.Api.Controllers
 
             content.Add(fileContent, "file", file.FileName);
 
-            var response = await client.PostAsync("http://localhost:5001/analyze/audio", content);
-            var result = await response.Content.ReadAsStringAsync();
+            var response = await _http.PostAsync("http://localhost:5001/analyze/audio", content);
+            var responseBody = await response.Content.ReadAsStringAsync();
 
-            return Ok(result);
+            return Content(responseBody, "application/json");
         }
     }
 }
