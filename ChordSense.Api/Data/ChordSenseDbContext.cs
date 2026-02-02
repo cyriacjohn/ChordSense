@@ -11,5 +11,7 @@ namespace ChordSense.Api.Data
         }
 
         public DbSet<Song> Songs { get; set; }
+
+        public DbSet<AnalysisResult> AnalysisResults {  get; set; }
     }
 }

@@ -2,10 +2,9 @@
 {
     public class LyricAnalysisResponse
     {
-        public string WesternKey { get; set; }
-        public string[] WesternChords { get; set; }
-        public string CarnaticRaga { get; set; }
-        public string HindustanRaga { get; set; }
-        public string[] Swaras { get; set; }
+        public string Status { get; set; }
+        public string Language { get; set; }
+        public string Sentiment { get; set; }
+        public string Mood { get; set; }
     }
 }

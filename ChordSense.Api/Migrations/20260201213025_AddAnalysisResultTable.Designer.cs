@@ -4,6 +4,7 @@ using ChordSense.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChordSense.Api.Migrations
 {
     [DbContext(typeof(ChordSenseDbContext))]
-    partial class ChordSenseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260201213025_AddAnalysisResultTable")]
+    partial class AddAnalysisResultTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,10 +53,6 @@ namespace ChordSense.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MusicalKey")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResultJson")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SampleRate")
