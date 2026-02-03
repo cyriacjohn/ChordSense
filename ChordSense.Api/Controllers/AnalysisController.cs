@@ -30,8 +30,13 @@ public class AnalysisController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(request.Lyrics))
+            if (string.IsNullOrEmpty(request.Lyrics))
             {
+                return BadRequest(new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "Lyrics cannot be empty"
+                });
                 _logger.LogWarning("Lyrics request received with empty body");
                 return BadRequest("Lyrics cannot be empty");
             }
@@ -42,15 +47,21 @@ public class AnalysisController : ControllerBase
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError("Flask AI returned error. StatusCode: {StatusCode}", response.StatusCode);
-                return StatusCode((int)response.StatusCode, "Python NLP service error");
+                return StatusCode(500, new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "Python NLP service error"
+                });
             }
 
             var result = await response.Content.ReadFromJsonAsync<LyricAnalysisResponse>();
-            _logger.LogInformation("Lyrics analysis completed successfully");
             if(result == null)
             {
-                return StatusCode(500, "Invalid AI Response");
+                return StatusCode(500, new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "Invalid AI response"
+                });
             }
             var entity = new AnalysisResult
             {
@@ -65,12 +76,21 @@ public class AnalysisController : ControllerBase
             };
             _db.AnalysisResults.Add(entity);
             await _db.SaveChangesAsync();
-            return Ok(result);
+            return Ok(new ApiResponse<LyricAnalysisResponse>
+            {
+                Success = true,
+                Message = "Lyrics analysis completed",
+                Data = result
+            });
         }
         catch(Exception ex)
         {
-            _logger.LogCritical(ex, "Failed to connect to Flask AI service");
-            return StatusCode(503,"AI service unavailable. Please try again later.");
+            _logger.LogError(ex, "Lyrics analysis failed");
+            return StatusCode(503, new ApiResponse<object>
+            {
+                Success = false,
+                Message = "AI service unavailable"
+            });
         }
     }
 
@@ -80,8 +100,13 @@ public class AnalysisController : ControllerBase
         try
         {
             if (file == null || file.Length == 0)
-                return BadRequest("No audio file uploaded");
-
+            {
+                return BadRequest(new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "No audio file uploaded"
+                });    
+            }
             var flaskUrl = "http://localhost:5001/analyze/audio";
 
             using var content = new MultipartFormDataContent();
@@ -95,7 +120,11 @@ public class AnalysisController : ControllerBase
             var audioResult = JsonSerializer.Deserialize<AudioAnalysisResponse>(result);
             if (audioResult == null)
             {
-                return StatusCode(500, "Invalid AI Response");
+                return StatusCode(500, new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "Invalid AI response"
+                });
             }
             var entity = new AnalysisResult
             {
@@ -109,12 +138,21 @@ public class AnalysisController : ControllerBase
             };
             _db.AnalysisResults.Add(entity);
             await _db.SaveChangesAsync();
-            return Ok(audioResult);
+            return Ok(new ApiResponse<AudioAnalysisResponse>
+            {
+                Success = true,
+                Message = "Audio analysis completed",
+                Data = audioResult
+            });
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "Failed to connect to Flask AI service");
-            return StatusCode(503, "AI service unavailable. Please try again later.");
+            _logger.LogError(ex, "Audio analysis failed");
+            return StatusCode(503, new ApiResponse<object>
+            {
+                Success = false,
+                Message = "AI service unavailable"
+            });
         }
     }
 }

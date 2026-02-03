@@ -42,7 +42,7 @@ A **single unified table** is used to store both lyrics and audio analysis.
 - Flexible schema for evolving AI models
 - Avoids premature normalization
 
-✍️ Lyrics Analysis Flow
+Lyrics Analysis Flow
 Endpoint
 POST /api/analysis/lyrics
 
@@ -60,7 +60,7 @@ Persist to SQL Server
 
 Return AI response to client
 
-🎵 Audio Analysis Flow
+Audio Analysis Flow
 Endpoint
 POST /api/analysis/audio
 
@@ -78,7 +78,7 @@ Persist musical attributes + raw JSON
 
 Return parsed AI response
 
-🔁 JSON Mapping (Critical Learning)
+JSON Mapping (Critical Learning)
 
 Flask returns snake_case JSON.
 

@@ -1,0 +1,21 @@
+<div class="lyrics-container">
+  <h2>Lyrics Analysis</h2>
+
+  <textarea placeholder="Place lyrics here..." [(ngModel)]="lyricsText" rows="6"></textarea>
+
+  <button (click)="analyzeLyrics()" [disabled]="loading">
+    {{ loading? "Analyzing..." : "Analyze Lyrics"}}
+  </button>
+
+  <div class="error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="result" *ngIf="result"> 
+    <h3>Result</h3>
+    <p><strong>Language:</strong>{{ result.language }}</p>
+    <p><strong>Sentiment:</strong>{{ result.sentiment }}</p>
+    <p><strong>Mood:</strong>{{ result.mood }}</p>
+  </div>
+
+</div>
