@@ -1,0 +1,88 @@
+<div class="audio-page">
+
+  <div class="audio-card">
+
+    <h2>🎧 Audio Analysis</h2>
+    <p class="subtitle">Upload a song to extract musical intelligence</p>
+
+    <!-- Upload box -->
+    <div class="upload-box"
+         (click)="fileInput.click()"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)"
+         (drop)="onFileDrop($event)"
+         [class.dragging]="isDragging">
+      <div class="upload-icon">🎧</div>
+      <div class="upload-text">
+        Drag & drop an audio file<br />
+        <small>or click to browse</small>
+      </div>
+    </div>
+
+    <div class="record-controls">
+      <button class="record-btn" *ngIf="!isRecording" (click)="startRecording()">🎙️ Start Recording</button>
+      <button class="record-btn stop" *ngIf="isRecording" (click)="stopRecording()"> ⏹ Stop Recording</button> 
+    </div>
+
+    <div id="waveform" *ngIf="selectedFile"></div>
+
+    <input #fileInput
+           type="file"
+           accept="audio/*"
+           hidden
+           (change)="onFileSelected($event)" />
+
+    <p class="file-name" *ngIf="selectedFile">
+      Selected: {{ selectedFile.name }}
+    </p>
+
+
+    <!-- Analyze button -->
+    <button class="analyze-btn"
+            (click)="analyzeAudio()"
+            [disabled]="loading || !selectedFile">
+      {{ loading ? 'Listening to the song…' : 'Analyze Audio' }}
+    </button>
+
+    <!-- Listening animation -->
+    <div class="listening" *ngIf="loading">
+      <div class="wave">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <p>Analyzing rhythm, tempo & harmony…</p>
+    </div>
+
+    <!-- Error -->
+    <p class="error" *ngIf="error">{{ error }}</p>
+
+    <!-- Result -->
+    <div class="result-card animate-in" *ngIf="result && !loading">
+
+      <h3>Analysis Result</h3>
+
+      <div class="metric">
+        <span>🎼 Key</span>
+        <strong>{{ result.key }}</strong>
+      </div>
+
+      <div class="metric">
+        <span>🥁 Tempo</span>
+        <strong>{{ result.tempo_bpm }} BPM</strong>
+      </div>
+
+      <div class="metric">
+        <span>🎚 Sample Rate</span>
+        <strong>{{ result.sample_rate }} Hz</strong>
+      </div>
+
+      <div class="confidence">
+        <div class="bar">
+          <div class="fill" [style.width.%]="confidence"></div>
+        </div>
+        <span>{{ confidence }}% confidence</span>
+      </div>
+
+    </div>
+
+  </div>
+</div>

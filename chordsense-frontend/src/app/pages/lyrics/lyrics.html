@@ -1,21 +1,50 @@
 <div class="lyrics-container">
   <h2>Lyrics Analysis</h2>
 
-  <textarea placeholder="Place lyrics here..." [(ngModel)]="lyricsText" rows="6"></textarea>
+  <textarea placeholder="Place lyrics here..." [(ngModel)]="lyricsText" rows="6" (keydown.enter)="analyzeLyrics()"></textarea>
 
   <button (click)="analyzeLyrics()" [disabled]="loading">
-    {{ loading? "Analyzing..." : "Analyze Lyrics"}}
+    {{ loading? "Listening to the lyrics..." : "Analyze Lyrics"}}
   </button>
+
+  <div class="skeleton" *ngIf="loading">
+    <div class="line"></div>
+    <div class="line short"></div>
+    <div class="line"></div>
+  </div>
 
   <div class="error" *ngIf="error">
     {{ error }}
   </div>
 
-  <div class="result" *ngIf="result"> 
-    <h3>Result</h3>
-    <p><strong>Language:</strong>{{ result.language }}</p>
-    <p><strong>Sentiment:</strong>{{ result.sentiment }}</p>
-    <p><strong>Mood:</strong>{{ result.mood }}</p>
+  <div class="result" *ngIf="result">
+    <h3>Analysis Result</h3>
+    <div class="result-card">
+      <span class="label">Language</span>
+      <strong class="value">🌍 {{ result.language }}</strong>
+    </div>
+    <hr class="music-divider" />
+    <div class="result-row">
+      <span>Sentiment</span>
+      <span class="badge" [ngClass]="result.sentiment">{{ getSentimentEmoji() }}   {{ result.sentiment }}</span>
+    </div>
+    <p class="explanation fade-in">{{ getSentimentExplanation() }}</p>
+    <p class="ai-voice">I’m fairly confident about this based on the emotional patterns in the lyrics.</p>
+    <hr class="music-divider" />
+    <div class="result-card">
+      <span class="label">Mood</span>
+      <strong class="value">🎵 {{ result.mood }}</strong>
+    </div>
+    <hr class="music-divider" />
+    <div class="confidence">
+      <span>Confidence</span>
+      <div class="bar">
+        <div class="fill" [style.width.%]="getConfidence()"></div>
+      </div>
+    </div>
+    <hr class="music-divider" />
+    <button class="secondary" (click)="lyricsText = ''" ; result="null;">
+      Analyze another song
+    </button>
   </div>
-
 </div>
