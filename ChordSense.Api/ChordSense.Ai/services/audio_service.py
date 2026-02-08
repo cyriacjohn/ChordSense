@@ -3,6 +3,7 @@ import librosa
 import numpy as np
 import tempfile
 import os
+import soundfile as sf
 
 app = Flask(__name__)
 
@@ -21,7 +22,7 @@ def analyze_audio_logic():
             temp_path = temp.name
 
         # Load audio
-        y, sr = librosa.load(temp_path, mono=True)
+        y, sr = librosa.load(temp_path, sr=None,mono=True)
 
         # Tempo detection
         tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
